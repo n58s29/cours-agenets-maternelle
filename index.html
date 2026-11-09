@@ -26,8 +26,8 @@ header{flex:none;display:flex;align-items:center;gap:14px;padding:8px 16px;backg
 header .btn{background:#fff;color:var(--bleu);min-height:40px}
 .btn:hover{filter:brightness(.93)}
 /* ---------- disposition bureau ---------- */
-#app{flex:1;min-height:0;display:grid;grid-template-columns:290px minmax(0,1fr) 320px;grid-template-rows:auto minmax(0,1fr);grid-template-areas:"pal stage obj" "pal stage side";gap:12px;padding:12px}
-#pal{grid-area:pal;overflow:auto}#stage{grid-area:stage}#obj{grid-area:obj}#side{grid-area:side}
+#app{flex:1;min-height:0;display:grid;grid-template-columns:290px minmax(0,1fr) 320px;grid-template-rows:minmax(0,1fr);grid-template-areas:"pal stage side";gap:12px;padding:12px}
+#pal{grid-area:pal;overflow:auto}#stage{grid-area:stage}#side{grid-area:side}
 .panel{background:#fff;border-radius:var(--r);padding:14px;min-height:0}
 #side{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto}
 #side .panel{flex:none}
@@ -44,6 +44,7 @@ header .btn{background:#fff;color:var(--bleu);min-height:40px}
 svg{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;background:#EEF1F4}
 .it:focus{outline:none}
 .it:focus-visible>:first-child{stroke:#00205B;stroke-width:.35}
+.tipov{font-size:.75rem;color:var(--gris)}
 #sel{position:absolute;left:8px;bottom:8px;max-width:75%;background:var(--sable);color:var(--bleu);border-radius:10px;padding:6px 10px;font-size:.875rem;pointer-events:none;display:none}
 #zoom{position:absolute;right:8px;bottom:8px;display:flex;flex-direction:column;gap:6px;z-index:3}
 #zoom button{width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:var(--bleu);font-size:1.3rem;line-height:1;cursor:pointer;box-shadow:0 1px 5px rgba(0,32,91,.35)}
@@ -63,11 +64,6 @@ svg{width:100%;height:100%;display:block;touch-action:none;user-select:none;-web
 .bar b{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--bleu)}
 .bar.low i{background:#C0504D}
 .mt{margin-top:12px}
-.ohead{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-bottom:4px}
-.oacts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
-.grp{display:inline-flex;align-items:center;gap:4px;background:var(--gris-clair);border-radius:10px;padding:2px 4px 2px 8px}
-.grp .gl{font-size:.8125rem;color:var(--gris);margin-right:2px}
-.grp .btn{min-width:44px;padding:6px 10px}
 #list{list-style:none;padding:0;max-height:170px;overflow:auto}
 #list button{width:100%;text-align:left;background:none;border:0;border-radius:8px;min-height:40px;padding:6px 8px;font-size:.8125rem;color:var(--bleu);cursor:pointer}
 #list button:hover,#list button[aria-current=true]{background:var(--sable)}
@@ -95,35 +91,29 @@ dialog ul{padding-left:20px;font-size:.9375rem;margin:6px 0 12px}
   #tool #mShare{background:var(--bleu);color:#fff}
   #shareBtn{display:none}
   #hud{display:block}
-  #sel{display:none!important}
-  #pal,#obj{grid-area:bottom;height:162px;border-radius:18px 18px 0 0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));overflow:hidden;box-shadow:0 -2px 10px rgba(0,32,91,.18);position:relative;z-index:5}
-  #pal h2,#pal .no,#obj h2,.tip{display:none}
+  #pal{grid-area:bottom;height:162px;border-radius:18px 18px 0 0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));overflow:hidden;box-shadow:0 -2px 10px rgba(0,32,91,.18);position:relative;z-index:5}
+  #pal h2,#pal .no{display:none}
   .cats{flex-wrap:nowrap;overflow-x:auto;margin-bottom:6px}
   .cats .chip{flex:none}
   .grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:96px;grid-template-rows:1fr;overflow-x:auto;overflow-y:hidden;height:96px;gap:8px;padding-bottom:2px}
   .item{min-height:0;height:100%;padding:6px 2px;font-size:.75rem}
   .item .e{font-size:1.5rem}
-  #obj{display:none}
-  #app.has-sel #pal{display:none}
-  #app.has-sel #obj{display:block}
-  .oacts{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
-  .oacts>*{flex:none}
   #side{display:none}
   #app[data-p=side] #side{display:block;position:fixed;inset:0;z-index:40;background:var(--fond);overflow:auto;padding:10px 12px calc(12px + env(safe-area-inset-bottom))}
   #side .panel{margin-bottom:12px}
   .back{display:inline-flex;align-items:center}
   #zoom{bottom:calc(8px)}
+  #sel{max-width:calc(100% - 70px)}
 }
 @media (max-width:900px) and (orientation:landscape) and (max-height:600px){
   header{display:none}
   #app{grid-template-columns:240px minmax(0,1fr);grid-template-rows:minmax(0,1fr);grid-template-areas:"bottom stage"}
-  #pal,#obj{height:auto;border-radius:0;overflow:auto;box-shadow:none}
+  #pal{height:auto;border-radius:0;overflow:auto;box-shadow:none}
   .cats{flex-wrap:wrap;overflow:visible}
   .grid{grid-auto-flow:row;grid-template-columns:repeat(2,1fr);grid-auto-columns:auto;grid-template-rows:none;height:auto;overflow:visible}
   .item{min-height:72px;height:auto}
-  .oacts{flex-wrap:wrap;overflow:visible}
 }
-@media print{body{height:auto;overflow:visible}header,#pal,#tool,#obj,#zoom,#hud,#sel,#side .btn,#side textarea,.back{display:none}#app{display:block}#stage{height:70vh}#side{display:block}}
+@media print{body{height:auto;overflow:visible}header,#pal,#tool,#zoom,#hud,#sel,#side .btn,#side textarea,.back{display:none}#app{display:block}#stage{height:70vh}#side{display:block}}
 </style>
 </head>
 <body>
@@ -167,11 +157,6 @@ dialog ul{padding-left:20px;font-size:.9375rem;margin:6px 0 12px}
     </div>
   </section>
 
-  <section class="panel" id="obj" aria-labelledby="h-obj">
-    <h2 id="h-obj">Élément sélectionné</h2>
-    <div id="objp"></div>
-  </section>
-
   <div id="side">
     <button class="btn alt back" id="sideBack" type="button">← Retour au plan</button>
     <section class="panel" id="bilan" aria-labelledby="h-bilan">
@@ -206,11 +191,11 @@ dialog ul{padding-left:20px;font-size:.9375rem;margin:6px 0 12px}
   <h2 id="h-aide">Comment ça marche</h2>
   <ul>
     <li>Choisissez un élément en bas (ou à gauche sur ordinateur) : il apparaît au centre du plan.</li>
-    <li>Glissez-le pour le déplacer. Tirez un côté pour changer sa longueur ou sa largeur, un coin pour l'agrandir. ↻ le fait pivoter, ✕ le supprime. Des boutons équivalents existent dans la barre de l'élément sélectionné.</li>
+    <li>Glissez-le pour le déplacer. Tirez un côté pour changer sa longueur ou sa largeur, un coin pour l'agrandir. ↻ le fait pivoter, ✕ le supprime.</li>
     <li>Pour un sol : choisissez-le, maintenez le doigt ou le clic et peignez. La gomme efface.</li>
     <li>Plan : pincez à deux doigts pour zoomer, glissez le fond pour le déplacer. Sur ordinateur : molette pour zoomer, glisser le fond pour déplacer. Le bouton ⤢ ramène la vue d'ensemble.</li>
     <li>Les arbres sont conservés. Le bac à sable, le toboggan et les jeux actuels (en gris) peuvent être supprimés.</li>
-    <li>Clavier : Tab pour atteindre un élément, flèches pour le déplacer (Maj = 2 m), Suppr pour l'effacer.</li>
+    <li>Clavier : Tab pour atteindre un élément, flèches pour le déplacer (Maj = 2 m), R pour pivoter, + et − pour la largeur (Alt pour la longueur), Suppr pour l'effacer.</li>
     <li>Quadrillage : 5 m. Objectifs de la Ville : 40 % de sol perméable et 40 % d'ombre.</li>
   </ul>
   <button class="btn" id="aideX" type="button">Fermer</button>
@@ -450,32 +435,13 @@ function bilan(){
 $("list").onclick=e=>{const b=e.target.closest("button");if(!b)return;sel=+b.dataset.id;if(brush)setBrush(null);$("app").dataset.p="pal";render();announce(descr(objs.find(o=>o.id===sel))+", sélectionné");}
 function bar(b,t,p,m){const B=$(b);B.querySelector("i").style.width=p+"%";B.classList.toggle("low",p<40);B.setAttribute("aria-valuenow",Math.round(p));$(t).textContent=Math.round(p)+" % · "+m+(p>=40?" — objectif atteint":" — objectif non atteint")}
 
-// ================= Barre « élément sélectionné » =================
+// ================= Étiquette « élément sélectionné » (nom, dimensions, conseil) =================
 function selbox(){
-  const o=objs.find(i=>i.id===sel),P=$("objp"),ov=$("sel");
-  $("app").classList.toggle("has-sel",!!o);
-  if(!o){P.innerHTML='<p class="sm">Aucun élément sélectionné. Cliquez ou touchez un élément du plan, ou choisissez-le dans la liste du bilan.</p>';ov.style.display="none";return}
-  const t=T[o.type],B=(a,x,y,label,txt)=>`<button type="button" class="btn alt" data-act="${a}" data-a="${x}" data-b="${y}" data-key="${a}${x}${y}" aria-label="${label}">${txt}</button>`;
-  const G=(name,inner)=>`<span class="grp" role="group" aria-label="${name}"><span class="gl">${name}</span>${inner}</span>`;
-  ov.style.display="block";ov.textContent=`${t.e} ${t.n} · ${dimTxt(o)}`;
-  let a="";
-  if(o.kind==="item"){
-    a+=G("Pivoter",B("rot",-45,0,"Pivoter de 45 degrés vers la gauche","↺")+B("rot",45,0,"Pivoter de 45 degrés vers la droite","↻"));
-    a+=G("Largeur",B("w",-.5,0,"Réduire la largeur de 0,5 mètre","−")+B("w",.5,0,"Augmenter la largeur de 0,5 mètre","+"));
-    if(!t.round)a+=G("Longueur",B("h",-.5,0,"Réduire la longueur de 0,5 mètre","−")+B("h",.5,0,"Augmenter la longueur de 0,5 mètre","+"));
-  }else a+=G("Épaisseur",B("th",-.5,0,"Réduire l'épaisseur du trait de 0,5 mètre","−")+B("th",.5,0,"Augmenter l'épaisseur du trait de 0,5 mètre","+"));
-  a+=G("Déplacer",B("mv",-.5,0,"Déplacer vers la gauche de 0,5 mètre","←")+B("mv",0,-.5,"Déplacer vers le haut de 0,5 mètre","↑")+B("mv",0,.5,"Déplacer vers le bas de 0,5 mètre","↓")+B("mv",.5,0,"Déplacer vers la droite de 0,5 mètre","→"));
-  a+=`<button type="button" class="btn warn" data-act="del" data-key="del">🗑 Supprimer</button><button type="button" class="btn" data-act="done" data-key="done">✓ OK</button>`;
-  P.innerHTML=`<div class="ohead"><strong id="nm">${t.e} ${t.n}</strong><span class="sm" id="dm">${dimTxt(o)}</span></div><p class="sm tip">${t.tip}</p><div class="oacts" role="group" aria-label="Actions sur l'élément sélectionné">${a}</div>`;
-  if(panelFocus){const b=P.querySelector(`[data-key="${panelFocus}"]`);panelFocus=null;if(b)b.focus({preventScroll:true})}
+  const o=objs.find(i=>i.id===sel),ov=$("sel");
+  if(!o){ov.style.display="none";return}
+  const t=T[o.type];ov.style.display="block";ov.innerHTML=`<strong>${t.e} ${t.n}</strong> · ${dimTxt(o)}<br><span class="tipov">${t.tip}</span>`;
 }
-function selDims(){const o=objs.find(i=>i.id===sel);if(!o)return;const d=$("dm");if(d)d.textContent=dimTxt(o);$("sel").textContent=`${T[o.type].e} ${T[o.type].n} · ${dimTxt(o)}`}
-$("objp").onclick=e=>{
-  const b=e.target.closest("button[data-act]");if(!b)return;const o=objs.find(i=>i.id===sel);if(!o)return;
-  if(b.dataset.act==="del"){removeObj(o);return}
-  if(b.dataset.act==="done"){sel=null;render();announce("Sélection terminée");return}
-  panelFocus=b.dataset.key;nudge(o,b.dataset.act,+b.dataset.a,+b.dataset.b);
-};
+function selDims(){selbox()}
 function removeObj(o){const pre=snap();objs=objs.filter(i=>i!==o);sel=null;pushHist(pre);render();save();announce(T[o.type].n+" supprimé")}
 function nudge(o,a,x,y){
   const pre=snap();
@@ -516,7 +482,7 @@ svg.addEventListener("pointerdown",e=>{
   if(k==="rot"){const s=objs.find(i=>i.id===sel);act={m:"rot",o:s,pre,moved:false};return}
   if(brush==="erase"){act={m:"erase",pre};erase(x,y);later();return}
   if(brush){cur={kind:"zone",type:brush,w:+$("bs").value||2.5,pts:[[r2(x),r2(y)]]};act={m:"draw",pre};later();return}
-  if(o){sel=o.id;act={m:"mv",o,pre,dx:o.x-x,dy:o.y-y,orig:o.kind==="zone"?o.pts.map(p=>p.slice()):null,sx:x,sy:y,cx0:e.clientX,cy0:e.clientY,started:false};render();return}
+  if(o){sel=o.id;announce(descr(o)+", sélectionné");act={m:"mv",o,pre,dx:o.x-x,dy:o.y-y,orig:o.kind==="zone"?o.pts.map(p=>p.slice()):null,sx:x,sy:y,cx0:e.clientX,cy0:e.clientY,started:false};render();return}
   pan={x:e.clientX,y:e.clientY,cx:view.cx,cy:view.cy,moved:false};
 });
 svg.addEventListener("pointermove",e=>{
@@ -566,6 +532,8 @@ svg.addEventListener("keydown",e=>{
   if(e.key==="Enter"||e.key===" "){e.preventDefault();sel=o.id;refocus=o.id;render();announce(descr(o)+", sélectionné");return}
   if(e.key==="Escape"){sel=null;render();return}
   if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();removeObj(o);return}
+  if(e.key==="r"||e.key==="R"){e.preventDefault();sel=o.id;refocus=o.id;nudge(o,"rot",e.shiftKey?-45:45,0);return}
+  if(["+","=","-","_"].includes(e.key)){e.preventDefault();sel=o.id;refocus=o.id;nudge(o,e.altKey?"h":"w",(e.key==="+"||e.key==="=")?.5:-.5,0);return}
   const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
   if(d){e.preventDefault();const st=e.shiftKey?2:.5;sel=o.id;refocus=o.id;nudge(o,"mv",d[0]*st,d[1]*st)}
 });

@@ -470,3 +470,41 @@
 .obj-bar-btn.danger:hover { background: #F9D3D1; }
 .obj-bar-btn .ico { width: 18px; height: 18px; }
 @media (pointer: coarse) { .obj-bar-btn { width: 44px; height: 44px; } }
+
+/* ---------- Bouton « Recommencer » de la barre du haut ---------- */
+.icon-btn-text { width: auto; padding: 0 10px; gap: 6px; display: inline-flex; align-items: center; font-size: var(--fs-s); font-weight: var(--fw-medium); }
+.desk-label { display: none; }
+@media (min-width: 1024px) { .desk-label { display: inline; } .icon-btn-text { padding: 0 12px 0 10px; } }
+
+/* ---------- Fiche dépliée sous la carte cliquée (ordinateur) ---------- */
+.card.is-open:not([aria-pressed="true"]) { background: var(--bleu-50); }
+.card.is-open::after {
+  content: ""; position: absolute; left: 50%; bottom: -9px; margin-left: -8px;
+  border: 8px solid transparent; border-bottom-color: var(--bleu-50); border-top: 0;
+}
+.cat-detail {
+  grid-column: 1 / -1;
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--bleu-50); border-radius: var(--r-m);
+  padding: 12px 12px 14px;
+  margin-top: 2px;
+  animation: unroll .24s var(--ease);
+  transform-origin: top center;
+}
+@keyframes unroll { from { opacity: 0; transform: translateY(-8px) scaleY(.92); } to { opacity: 1; transform: none; } }
+@media (min-width: 1024px) { .cards { grid-auto-rows: max-content; } }
+.cd-head { display: flex; align-items: center; gap: 10px; }
+.cd-head .tile { width: 44px; height: 44px; }
+.cd-title { flex: 1; min-width: 0; }
+.cd-title h3 { font-size: var(--fs-m); }
+.cd-title p { font-size: var(--fs-s); font-variant-numeric: tabular-nums; }
+.cd-close { width: 36px; height: 36px; background: var(--surface); }
+.cd-tip { font-size: var(--fs-s); color: var(--ink); }
+.cd-state { display: flex; gap: 8px; align-items: flex-start; font-size: var(--fs-s); color: var(--bleu); background: var(--surface); border-radius: var(--r-s); padding: 8px 10px; }
+.cd-state .ico { width: 18px; height: 18px; color: var(--cyan); margin-top: 1px; }
+.cd-params { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border-radius: var(--r-s); padding: 10px 12px; }
+.cd-params .slider { flex-wrap: wrap; }
+.cd-row { display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+.cd-row .chip .ico { width: 16px; height: 16px; }
+.cd-row .chip[aria-pressed="true"]::before { content: none; }
+.cd-again { align-self: flex-start; }

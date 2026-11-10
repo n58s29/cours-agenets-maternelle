@@ -79,17 +79,15 @@ fieldset { border: 0; padding: 0; min-width: 0; }
   min-height: 0;
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr) 340px;
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    "cat stage tool"
-    "cat stage side";
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "cat stage side";
   gap: var(--gap);
   padding: var(--gap);
   position: relative;
 }
 #catalog { grid-area: cat; }
 #stage { grid-area: stage; }
-#inspector, #brushPanel { grid-area: tool; }
+#inspector, #brushPanel { grid-area: dock; }
 #side { grid-area: side; }
 
 .panel { background: var(--surface); border-radius: var(--r-l); padding: 16px; min-height: 0; min-width: 0; }
@@ -114,6 +112,8 @@ fieldset { border: 0; padding: 0; min-width: 0; }
 
 @media (min-width: 1024px) {
   .mob-only { display: none !important; }
+  /* Sur ordinateur, la colonne de droite reste fixe (bilan) : les réglages se déroulent dans le catalogue */
+  #inspector, #brushPanel { display: none !important; }
 }
 .only-touch { display: none; }
 @media (pointer: coarse) {
@@ -199,9 +199,12 @@ fieldset { border: 0; padding: 0; min-width: 0; }
   .lbl-long { display: none; }
   .lbl-short { display: inline; }
   .topbar { gap: 6px; }
+  .topbar-actions { gap: 0; }
+  .topbar .icon-btn { width: 40px; }
+  .topbar .icon-btn-text { width: 40px; padding: 0; justify-content: center; }
   .topbar-actions .btn { margin-left: 4px; padding: 0 12px; }
 }
-@media (max-width: 360px) {
+@media (max-width: 440px) {
   .lbl-short { display: none; }
   .topbar-actions .btn { padding: 0 10px; }
 }

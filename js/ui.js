@@ -10,6 +10,9 @@
 
   let tab = C.CATS[0].id;
   let brushHintShown = false;
+  let lastSol = "copeaux";      // dernier sol choisi (fiche ouverte pendant la gomme)
+  let detailKey = "";           // état de la fiche dépliée dans le catalogue
+  const isDesk = () => !!(window.matchMedia && matchMedia("(min-width: 1024px)").matches);
 
   const tileBg = t => (t.fill ? hexA(t.fill, Math.min(.85, (t.op || 1))) : C.COL[t.c]);
   function hexA(hex, a) {
@@ -104,6 +107,7 @@
     });
     box.scrollLeft = 0;
     box.scrollTop = 0;
+    detailKey = "";             // la fiche sera replacée sous la bonne carte
   }
   function updateCardsPressed() {
     $("catCards").querySelectorAll(".card[aria-pressed]").forEach(b => b.setAttribute("aria-pressed", S.brush === b.dataset.type));
@@ -139,23 +143,29 @@
     box.prepend(er);           // la gomme en premier : toujours visible sur téléphone
 
     const range = $("brushSize");
-    range.value = S.brushSize;
-    const sync = () => {
-      const v = U.fr(S.brushSize);
-      $("brushSizeOut").textContent = v + " m";
-      range.setAttribute("aria-valuetext", v + " mètres");
-    };
-    sync();
-    range.addEventListener("input", () => {
-      S.brushSize = +range.value || 2.5;
-      sync();
-      store.save();
-      C.schedule({ overlay: true });
-    });
+    syncBrushSize();
+    range.addEventListener("input", () => setBrushSize(range.value));
     $("brushDone").addEventListener("click", () => setBrush(null));
   }
 
+  // Taille du pinceau : un seul réglage, affiché dans le dock (téléphone) et dans la fiche (ordinateur)
+  function syncBrushSize() {
+    const v = U.fr(S.brushSize);
+    document.querySelectorAll(".js-brush-size").forEach(r => {
+      if (+r.value !== S.brushSize) r.value = S.brushSize;
+      r.setAttribute("aria-valuetext", v + " mètres");
+    });
+    document.querySelectorAll(".js-brush-out").forEach(o => { o.textContent = v + " m"; });
+  }
+  function setBrushSize(val) {
+    S.brushSize = U.clamp(+val || 2.5, 1, 8);
+    syncBrushSize();
+    store.save();
+    C.schedule({ overlay: true });
+  }
+
   function setBrush(type, silent) {
+    if (type && type !== "erase") lastSol = type;
     S.brush = type || null;
     if (S.brush && S.sel != null) S.sel = null;
     if (!silent) {
@@ -281,7 +291,7 @@
     $("scorePill").setAttribute("aria-label", `Voir le bilan : sol perméable ${Math.round(st.permPct)} %, ombre ${Math.round(st.shadePct)} %`);
     $("baseline").textContent = `Cour : ${Math.round(st.area)} m². Au départ : ${Math.round(C.geo.PERM0)} m² perméables (chiffres du lancement) et ${Math.round(C.geo.shade0Area)} m² d'ombre sous les arbres existants.`;
     updateList(st);
-    if (S.sel != null) updateInspector();
+    if (S.sel != null) { updateInspector(); updateDetail(); }
   }
 
   function updateList(st) {
@@ -363,14 +373,7 @@
     $("dlgWelcome").addEventListener("close", () => { if (!S.onboarded) store.setMeta({ onboarded: true }); });
     $("welcomeHelp").addEventListener("click", () => { closeDialog($("dlgWelcome")); openDialog("dlgHelp"); });
     $("btnHelp").addEventListener("click", () => openDialog("dlgHelp"));
-    $("btnReset").addEventListener("click", async () => {
-      closeDialog($("dlgHelp"));
-      const ok = await confirmBox("Recommencer à zéro ?", "Vos ajouts seront effacés et les équipements actuels reviendront. Vous pourrez encore annuler juste après.", "Recommencer");
-      if (!ok) return;
-      store.reset();
-      C.view.fit();
-      toast("Plan remis à zéro.", { action: "Annuler", onAction: () => undo() });
-    });
+    $("btnReset").addEventListener("click", resetPlan);
   }
 
   function confirmBox(title, text, okLabel) {
@@ -386,6 +389,100 @@
       d.addEventListener("close", () => { ok.removeEventListener("click", onOk); resolve(result); }, { once: true });
       openDialog("dlgConfirm");
     });
+  }
+
+  /* ---------- Recommencer ---------- */
+  function resetPlan() {
+    if (S.brush) setBrush(null, true);
+    store.reset();
+    C.view.fit();
+    C.schedule({ scene: true, ui: true });
+    toast("Plan remis comme au départ.", { action: "Annuler", onAction: () => undo(), duration: 9000 });
+  }
+
+  /* ---------- Fiche qui se déroule sous l'élément cliqué (ordinateur) ---------- */
+  function detailState() {
+    if (S.brush) return { type: S.brush === "erase" ? lastSol : S.brush, zone: true };
+    const o = store.selected();
+    if (o && T[o.type] && T[o.type].c !== "exist") return { type: o.type, zone: o.kind === "zone", obj: o };
+    return null;
+  }
+
+  function buildDetail(st) {
+    const t = T[st.type];
+    const d = h("div", { class: "cat-detail", id: "catDetail", role: "region", "aria-label": "Fiche : " + t.n });
+    const head = h("div", { class: "cd-head" });
+    const tile = h("span", { class: "tile tile-art", "aria-hidden": "true" });
+    tile.appendChild(C.art.preview(st.type));
+    const tt = h("div", { class: "cd-title" });
+    tt.appendChild(h("h3", { text: t.n }));
+    tt.appendChild(h("p", { class: "muted js-cd-dims" }));
+    const close = h("button", { type: "button", class: "icon-btn icon-btn-tonal cd-close", "aria-label": "Fermer la fiche", title: "Fermer" }, icon("i-close"));
+    close.addEventListener("click", () => { if (S.brush) setBrush(null); else store.select(null); });
+    head.append(tile, tt, close);
+    d.appendChild(head);
+    d.appendChild(h("p", { class: "cd-tip", text: t.tip }));
+
+    if (st.zone && S.brush) {
+      const params = h("div", { class: "cd-params" });
+      const lab = h("label", { class: "slider" });
+      lab.appendChild(h("span", { text: "Taille du pinceau" }));
+      const r = h("input", { type: "range", min: "1", max: "8", step: "0.5", class: "js-brush-size", "aria-label": "Taille du pinceau" });
+      r.value = S.brushSize;
+      r.addEventListener("input", () => setBrushSize(r.value));
+      lab.appendChild(r);
+      lab.appendChild(h("output", { class: "js-brush-out" }));
+      params.appendChild(lab);
+      const row = h("div", { class: "cd-row" });
+      const er = h("button", { type: "button", class: "chip js-cd-erase" }, `${icon("i-eraser")}<span>Gomme</span>`);
+      er.addEventListener("click", () => setBrush(S.brush === "erase" ? lastSol : "erase"));
+      const done = h("button", { type: "button", class: "btn btn-primary btn-sm" }, `${icon("i-check")}Terminé`);
+      done.addEventListener("click", () => setBrush(null));
+      row.append(er, done);
+      params.appendChild(row);
+      d.appendChild(params);
+    } else if (st.obj) {
+      d.appendChild(h("p", { class: "cd-state" },
+        `${icon("i-hand")}<span>Sur le plan : glissez pour déplacer, poignée ronde pour tourner, coins et côtés pour la taille.</span>`));
+      if (!st.zone) {
+        const again = h("button", { type: "button", class: "btn btn-tonal btn-sm cd-again" }, `${icon("i-plus")}Ajouter un autre`);
+        again.addEventListener("click", () => addItem(st.type));
+        d.appendChild(again);
+      }
+    }
+    return d;
+  }
+
+  function updateDetail() {
+    const box = $("catCards");
+    const old = $("catDetail");
+    const st = isDesk() ? detailState() : null;
+    if (!st) { if (old) old.remove(); detailKey = ""; return; }
+    // La fiche suit l'onglet de l'élément sélectionné
+    const cat = T[st.type].c;
+    if (cat !== tab && C.CATS.some(c => c.id === cat)) { tab = cat; updateTabs(); buildCards(); }
+    const key = [st.type, st.zone, !!S.brush, st.obj ? st.obj.id : ""].join("|");
+    let d = $("catDetail");
+    if (key !== detailKey || !d) {
+      if (d) d.remove();
+      d = buildDetail(st);
+      // Insertion juste après la dernière carte de la même ligne
+      const card = box.querySelector(`.card[data-type="${st.type}"]`);
+      if (card) {
+        const top = card.offsetTop;
+        let last = card;
+        box.querySelectorAll(".card").forEach(c => { if (c.offsetTop === top) last = c; });
+        last.after(d);
+      } else box.prepend(d);
+      detailKey = key;
+      requestAnimationFrame(() => { if (d.scrollIntoView) d.scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+    }
+    box.querySelectorAll(".card").forEach(c => c.classList.toggle("is-open", c.dataset.type === st.type));
+    const dims = d.querySelector(".js-cd-dims");
+    if (dims) dims.textContent = st.obj ? C.dimText(st.obj, C.metrics && C.metrics.areas) : (st.zone ? "Sol à peindre sur le plan" : "");
+    const er = d.querySelector(".js-cd-erase");
+    if (er) er.setAttribute("aria-pressed", S.brush === "erase");
+    syncBrushSize();
   }
 
   /* ---------- Annuler / rétablir ---------- */
@@ -406,6 +503,8 @@
     updateCardsPressed();
     updateBrushPanel();
     updateInspector();
+    updateDetail();
+    if (!S.brush && !store.selected()) $("catCards").querySelectorAll(".card.is-open").forEach(c => c.classList.remove("is-open"));
     const cur = $("objList").querySelector('[aria-current="true"]');
     if (cur && +cur.dataset.id !== S.sel) cur.removeAttribute("aria-current");
     if (S.sel != null) {
@@ -434,7 +533,7 @@
     // Quitter le mode feuille si on passe en grand écran
     if (window.matchMedia) {
       const mq = matchMedia("(min-width: 1024px)");
-      const onMq = () => { if (mq.matches && sheetOpen()) closeSheet(); };
+      const onMq = () => { if (mq.matches && sheetOpen()) closeSheet(); C.schedule({ ui: true }); };
       if (mq.addEventListener) mq.addEventListener("change", onMq); else if (mq.addListener) mq.addListener(onMq);
     }
   }

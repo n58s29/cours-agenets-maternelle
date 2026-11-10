@@ -63,8 +63,9 @@
   <div class="topbar-actions">
     <button class="icon-btn" id="btnUndo" type="button" aria-label="Annuler" title="Annuler (Ctrl+Z)" disabled><svg class="ico"><use href="#i-undo"/></svg></button>
     <button class="icon-btn" id="btnRedo" type="button" aria-label="Rétablir" title="Rétablir (Ctrl+Maj+Z)" disabled><svg class="ico"><use href="#i-redo"/></svg></button>
+    <button class="icon-btn icon-btn-text" id="btnReset" type="button" aria-label="Recommencer à zéro" title="Recommencer à zéro"><svg class="ico"><use href="#i-reset"/></svg><span class="desk-label">Recommencer</span></button>
     <button class="icon-btn" id="btnHelp" type="button" aria-label="Aide" title="Aide"><svg class="ico"><use href="#i-help"/></svg></button>
-    <button class="btn btn-on-dark" id="btnShare" type="button"><svg class="ico" aria-hidden="true"><use href="#i-share"/></svg><span class="lbl-long">Partager ma cour</span><span class="lbl-short">Partager</span></button>
+    <button class="btn btn-on-dark" id="btnShare" type="button" aria-label="Partager ma cour"><svg class="ico" aria-hidden="true"><use href="#i-share"/></svg><span class="lbl-long">Partager ma cour</span><span class="lbl-short">Partager</span></button>
   </div>
 </header>
 
@@ -74,7 +75,7 @@
   <aside id="catalog" class="panel dock catalog" aria-label="Éléments à ajouter" tabindex="-1">
     <div class="panel-head desk-only">
       <h2>Ajouter à ma cour</h2>
-      <p class="muted">Cliquez un élément : il apparaît au centre du plan.</p>
+      <p class="muted">Cliquez un élément : il apparaît sur le plan et sa fiche s'ouvre ici.</p>
     </div>
     <div class="tabs" id="catTabs" role="tablist" aria-label="Catégories d'éléments"></div>
     <div class="cards" id="catCards" role="tabpanel"></div>
@@ -143,8 +144,8 @@
     <div class="swatches" id="swatches" role="group" aria-label="Choisir le sol à peindre"></div>
     <label class="slider" for="brushSize">
       <span>Taille</span>
-      <input type="range" id="brushSize" min="1" max="8" step="0.5" value="2.5">
-      <output id="brushSizeOut" for="brushSize">2,5 m</output>
+      <input type="range" id="brushSize" class="js-brush-size" min="1" max="8" step="0.5" value="2.5">
+      <output id="brushSizeOut" class="js-brush-out" for="brushSize">2,5 m</output>
     </label>
   </section>
 
@@ -213,7 +214,7 @@
   <div class="help-grid">
     <section>
       <h3>Ajouter</h3>
-      <p>Touchez un élément dans la liste : il apparaît au centre du plan. Pour un sol (copeaux, herbe…), touchez-le puis peignez sur le plan.</p>
+      <p>Touchez un élément dans la liste : il apparaît sur le plan et sa fiche s'ouvre (conseils, réglages). Pour un sol (copeaux, herbe…), touchez-le puis peignez sur le plan. Le bouton <svg class="ico ico-inline" aria-hidden="true"><use href="#i-reset"/></svg> Recommencer remet le plan de départ, et on peut annuler juste après.</p>
     </section>
     <section>
       <h3>Modifier</h3>
@@ -234,8 +235,7 @@
       <p>Tab pour atteindre un élément, flèches pour le déplacer (Maj : 2 m), R pour tourner, + et − pour la taille (Alt : largeur), Suppr pour l'effacer, Ctrl+Z pour annuler.</p>
     </section>
   </div>
-  <div class="dlg-actions split">
-    <button class="btn btn-danger-tonal" type="button" id="btnReset"><svg class="ico" aria-hidden="true"><use href="#i-reset"/></svg>Recommencer à zéro</button>
+  <div class="dlg-actions">
     <button class="btn btn-primary" type="button" data-close>J'ai compris</button>
   </div>
 </dialog>

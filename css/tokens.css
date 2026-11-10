@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Ma cour de rêve — jetons de design (charte FAN / e.SNCF Solutions)
+   Avenir 300/400/500 · zéro bordure · aplats tonaux
+   ========================================================================== */
+:root {
+  color-scheme: light;
+
+  /* Palette FAN */
+  --bleu: #00205B;
+  --bleu-700: #0A2F78;
+  --bleu-100: #DDE5F2;
+  --bleu-50: #EEF2F9;
+  --cyan: #0084D4;
+  --cyan-100: #D6EBF8;
+  --menthe: #A1D6CA;
+  --bleu-clair: #A4C8E1;
+  --lilas: #C7B2DE;
+  --sable: #E5CF85;
+  --sable-100: #F7EFD3;
+  --vert: #00B388;
+  --vert-fonce: #00805F;
+  --vert-100: #D9F2EA;
+  --corail: #F2827F;
+  --corail-100: #FCE4E3;
+  --rouge-fonce: #A3302B;
+
+  /* Neutres */
+  --ink: #2B2F36;
+  --muted: #5B6270;
+  --surface: #FFFFFF;
+  --surface-2: #F4F6F8;
+  --surface-3: #E9EDF2;
+  --plan-bg: #EEF1F4;
+
+  /* Typo */
+  --font: Avenir, "Avenir Next", "Nunito Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --fw-light: 300;
+  --fw-book: 400;
+  --fw-medium: 500;
+  --fs-xs: .75rem;
+  --fs-s: .8125rem;
+  --fs-m: .9375rem;
+  --fs-l: 1.125rem;
+  --fs-xl: 1.375rem;
+
+  /* Formes */
+  --r-s: 10px;
+  --r-m: 14px;
+  --r-l: 20px;
+  --r-pill: 999px;
+  --shadow-float: 0 2px 12px rgba(0, 32, 91, .16);
+  --shadow-sheet: 0 -4px 24px rgba(0, 32, 91, .14);
+
+  /* Mise en page */
+  --topbar-h: 56px;
+  --dock-h: 204px;
+  --gap: 12px;
+  --tap: 44px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
